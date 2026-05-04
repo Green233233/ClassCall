@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>正在准备</title>
+  <style>
+    html,body{height:100%;margin:0;background:#f6f7fb;font-family:system-ui,-apple-system,Segoe UI,Roboto,"PingFang SC","Microsoft YaHei",sans-serif;color:#222}
+    .center{display:flex;align-items:center;justify-content:center;height:100%;flex-direction:column}
+    .msg{font-size:18px;margin-top:12px}
+    .spinner{width:48px;height:48px;border:4px solid rgba(0,0,0,0.08);border-top-color:#3b82f6;border-radius:50%;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="center" role="status" aria-live="polite">
+    <div class="title">ClassCall 点星</div>
+    <div class="ver">Alpha v0.1.0</div>
+    <div style="height:12px"></div>
+    <div class="spinner" aria-hidden="true"></div>
+    <div class="msg">正在准备，请稍候…</div>
+  </div>
+</body>
+</html>
