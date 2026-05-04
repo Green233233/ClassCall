@@ -1,8 +1,8 @@
 {
   "name": "classcall-dianxing",
-  "version": "0.1.0-alpha",
+  "version": "0.1.1-alpha",
   "productName": "ClassCall 点星",
-  "appVersionDisplay": "Alpha v0.1.0",
+  "appVersionDisplay": "Alpha v0.1.1",
   "description": "课堂随机点名系统 (ClassCall 点星)",
   "main": "main.js",
   "scripts": {
