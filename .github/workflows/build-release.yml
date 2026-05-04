@@ -1,0 +1,66 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'Alpha v*'
+      - 'Alpha-*'
+      - 'Alpha_v*'
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Windows portable + NSIS (ia32, x64, arm64)
+        run: npx electron-builder --win portable nsis --ia32 --x64 --arm64
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          release_name: ${{ github.ref_name }}
+          body: |
+            ClassCall 点星 - ${GITHUB_REF##*/}
+
+            发行说明：
+            - 版本：Alpha v0.1.1
+            - 内容：主程序（portable）和本地安装程序（NSIS）
+
+            使用方法：
+            1. 下载与你系统架构匹配的 `ClassCall 点星 0.1.1-alpha.exe`（portable）或安装程序 `ClassCall 点星 Setup 0.1.1-alpha.exe`。
+            2. portable：解压并运行 exe；installer：双击安装后从开始菜单启动。
+
+            问题与反馈：请在仓库 Issues 提交问题： https://github.com/Green233233/ClassCall/issues
+
+            声明：本发行版由 AI 自动构建并发布。如需人工签名或进一步验证，请联系维护者。
+          draft: false
+          prerelease: true
+
+      - name: Upload Release Assets
+        env:
+          UPLOAD_URL: ${{ steps.create_release.outputs.upload_url }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: powershell
+        run: |
+          Write-Host "Uploading files from dist..."
+          $uploadUrl = $env:UPLOAD_URL
+          $token = $env:GITHUB_TOKEN
+          if (-not $uploadUrl) { Write-Error "No upload URL"; exit 1 }
+          $files = Get-ChildItem -Path dist -File -Recurse
+          foreach ($f in $files) {
+            $name = [System.Uri]::EscapeDataString($f.Name)
+            $url = "$uploadUrl?name=$name"
+            Write-Host "Uploading $($f.FullName) -> $url"
+            Invoke-RestMethod -Uri $url -Method Post -Headers @{ Authorization = "token $token"; "Content-Type" = "application/octet-stream" } -InFile $f.FullName -UseBasicParsing
+          }
