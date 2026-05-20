@@ -276,13 +276,5 @@
     }
     loadConfig();
 
-    // 通知主进程：渲染器初始化完成，可以安全显示窗口并立即响应用户输入
-    try {
-        const { ipcRenderer } = require('electron');
-        // 延迟到下一次事件循环，确保任何延后 DOM 更新（setTimeout）先执行
-        setTimeout(() => {
-            try { ipcRenderer.send('renderer-ready'); } catch (e) {}
-        }, 0);
-    } catch (e) {
-        // 非 Electron 环境忽略
-    }
+    // 如果在 Electron 中运行，渲染器通常会通知主进程（renderer-ready）。
+    // 为了在浏览器端正常运行（web 构建），已移除对 Electron `ipcRenderer` 的直接调用。
