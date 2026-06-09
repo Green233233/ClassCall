@@ -169,14 +169,28 @@
         if (remainingStudents.length <= MAX_ANIM_ITEMS) {
             items = [...remainingStudents];
         } else {
-            const sample = new Set([selectedIndex]);
-            while (sample.size < MAX_ANIM_ITEMS) {
-                sample.add(Math.floor(Math.random() * remainingStudents.length));
+            // collect a random set of indices (ensure selectedIndex included)
+            const sampleIndices = new Set();
+            sampleIndices.add(selectedIndex);
+            while (sampleIndices.size < MAX_ANIM_ITEMS) {
+                sampleIndices.add(Math.floor(Math.random() * remainingStudents.length));
             }
-            items = Array.from(sample).map(i => remainingStudents[i]);
+            items = Array.from(sampleIndices).map(i => remainingStudents[i]);
         }
+
+        // Shuffle items so the selectedStudent doesn't always end up at the first position
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+        shuffleArray(items);
+
+        // Guarantee selectedStudent is present (safety) and then render boxes
         if (!items.includes(selectedStudent)) {
-            items[Math.floor(Math.random() * items.length)] = selectedStudent;
+            const pos = Math.floor(Math.random() * items.length);
+            items[pos] = selectedStudent;
         }
         items.forEach(name => {
             const box = document.createElement('div');
