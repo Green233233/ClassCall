@@ -169,14 +169,28 @@
         if (remainingStudents.length <= MAX_ANIM_ITEMS) {
             items = [...remainingStudents];
         } else {
-            const sample = new Set([selectedIndex]);
-            while (sample.size < MAX_ANIM_ITEMS) {
-                sample.add(Math.floor(Math.random() * remainingStudents.length));
+            // collect a random set of indices (ensure selectedIndex included)
+            const sampleIndices = new Set();
+            sampleIndices.add(selectedIndex);
+            while (sampleIndices.size < MAX_ANIM_ITEMS) {
+                sampleIndices.add(Math.floor(Math.random() * remainingStudents.length));
             }
-            items = Array.from(sample).map(i => remainingStudents[i]);
+            items = Array.from(sampleIndices).map(i => remainingStudents[i]);
         }
+
+        // Shuffle items so the selectedStudent doesn't always end up at the first position
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+        }
+        shuffleArray(items);
+
+        // Guarantee selectedStudent is present (safety) and then render boxes
         if (!items.includes(selectedStudent)) {
-            items[Math.floor(Math.random() * items.length)] = selectedStudent;
+            const pos = Math.floor(Math.random() * items.length);
+            items[pos] = selectedStudent;
         }
         items.forEach(name => {
             const box = document.createElement('div');
@@ -276,13 +290,5 @@
     }
     loadConfig();
 
-    // 通知主进程：渲染器初始化完成，可以安全显示窗口并立即响应用户输入
-    try {
-        const { ipcRenderer } = require('electron');
-        // 延迟到下一次事件循环，确保任何延后 DOM 更新（setTimeout）先执行
-        setTimeout(() => {
-            try { ipcRenderer.send('renderer-ready'); } catch (e) {}
-        }, 0);
-    } catch (e) {
-        // 非 Electron 环境忽略
-    }
+    // 如果在 Electron 中运行，渲染器通常会通知主进程（renderer-ready）。
+    // 为了在浏览器端正常运行（web 构建），已移除对 Electron `ipcRenderer` 的直接调用。

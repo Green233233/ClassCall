@@ -1,0 +1,69 @@
+---
+home: true
+heroText: ClassCall 点星
+tagline: 课堂随机点名系统 · Alpha v0.1.1
+---
+
+<link rel="stylesheet" href="/styles.css">
+
+<div class="app-root">
+<header class="app-header">
+    <h1>ClassCall 点星 <small class="app-version">Alpha v0.1.1</small></h1>
+    <button id="openSettings" class="icon-btn" title="设置">⚙</button>
+</header>
+
+<main class="container">
+    <section class="naming-area">
+        <div id="currentStudent" class="current-student">请在设置中导入学生名单</div>
+        <div class="controls grid-controls">
+            <div class="controls-left">
+                <button id="resetBtn" class="reset-btn">重置</button>
+            </div>
+            <div class="controls-center">
+                <button id="startBtn" class="start-btn" disabled>开始点名</button>
+            </div>
+            <div class="controls-right">
+                <div class="counts">
+                    <div>总人数：<span id="totalCount">0</span></div>
+                    <div>已点名：<span id="namedCount">0</span></div>
+                </div>
+            </div>
+        </div>
+        <div id="animWrapper" class="anim-wrapper hidden" aria-hidden="true">
+            <div id="animContainer" class="anim-container"></div>
+        </div>
+    </section>
+    <section class="named-area">
+        <h2>已点名学生</h2>
+        <div id="namedGrid" class="named-grid"></div>
+    </section>
+</main>
+
+<div id="settingsPanel" class="settings-panel" aria-hidden="true">
+    <div class="settings-card">
+        <header class="settings-header">
+            <h2>设置</h2>
+            <button id="closeSettings" class="icon-btn" title="关闭">✕</button>
+        </header>
+        <div class="setting-item">
+            <label for="fileInput">导入学生名单（TXT，每行一个名字）</label>
+            <input type="file" id="fileInput" accept=".txt">
+            <button id="importBtn">导入并重置</button>
+        </div>
+        <div class="setting-item">
+            <label>主题</label>
+            <div class="theme-toggle">
+                <label><input type="radio" name="themeRadio" value="dark"> 深色</label>
+                <label><input type="radio" name="themeRadio" value="light"> 浅色</label>
+                <label><input type="radio" name="themeRadio" value="auto"> 跟随系统</label>
+            </div>
+        </div>
+        <footer class="settings-footer">
+            <small>关闭后保存设置</small>
+        </footer>
+    </div>
+</div>
+
+<script type="module" src="/app.js"></script>
+
+</div>
